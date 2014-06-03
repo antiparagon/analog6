@@ -13,6 +13,6 @@ public class Euler extends Block {
 
 	@Override
 	public void doStep() {
-		setOutput(getOutput() + (getInput() * getCurrentTimeStep()));
+		setOutput(getOutput(getCurrentTime()) + (getInput() * getCurrentTimeStep()));
 	}
 }

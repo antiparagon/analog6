@@ -14,7 +14,7 @@ public interface BlockInterface {
 	void update();
 	double getCurrentTime();
 	    
-	double getOutput();
+	double getOutput(double time);
 	  
 	void addInput(BlockInterface bi);
 	int getNumInputs();

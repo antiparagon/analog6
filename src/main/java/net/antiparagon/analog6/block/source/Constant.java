@@ -15,7 +15,7 @@ public class Constant extends Block {
 	public void doStep() { }
 	
 	@Override
-	public double getOutput() {
+	public double getOutput(double time) {
 		return constantValue;
 	}
 

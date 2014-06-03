@@ -20,7 +20,7 @@ public abstract class Block implements BlockInterface {
 	public String getType() { return getClass().getName(); }
 
 	public void initialize(double startTime) { 
-		this.currentTime = startTime;
+		currentTime = startTime;
 	}
 
 	public void step(double timeStep) { 
@@ -35,7 +35,7 @@ public abstract class Block implements BlockInterface {
 	public double getInput() {
 		double input = 0.0;
 		for(BlockInterface block : inputs) {
-			input += block.getOutput();
+			input += block.getOutput(getCurrentTime());
 		}
 		return input;
 	}
@@ -55,7 +55,10 @@ public abstract class Block implements BlockInterface {
 		return currentTime;
 	}
 
-	public double getOutput() { 
+	public double getOutput(double time) {
+		if(getCurrentTime() != time) {
+			throw new RuntimeException("Block time (" + getCurrentTime() + ") not equal to requested output time (" + time + ")");
+		}
 		return portOutput;
 	}
 
