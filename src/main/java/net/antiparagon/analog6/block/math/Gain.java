@@ -1,8 +1,8 @@
 package net.antiparagon.analog6.block.math;
 
-import net.antiparagon.analog6.block.Block;
+import net.antiparagon.analog6.block.StatelessBlock;
 
-public class Gain extends Block {
+public class Gain extends StatelessBlock {
 
 	final double gainValue;
 	
@@ -13,7 +13,5 @@ public class Gain extends Block {
 	@Override
 	public void doStep() {
 		setOutput(gainValue * getInput());
-		// Pass thru block
-		update();
 	}
 }

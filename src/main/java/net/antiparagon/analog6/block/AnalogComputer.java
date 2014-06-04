@@ -11,6 +11,12 @@ public class AnalogComputer extends Block {
 		setName("Analog Computer");
 	}
 
+	public AnalogComputer addBlock(BlockInterface block) {
+		blocks.add(block);
+		return this;
+	}
+	
+	
 	public boolean hasState() {
 		for(BlockInterface bi : blocks) {
 			if(bi.hasState()) return true;
