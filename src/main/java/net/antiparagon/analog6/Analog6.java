@@ -10,6 +10,7 @@ import net.antiparagon.analog6.block.AnalogComputer;
 import net.antiparagon.analog6.block.BlockInterface;
 import net.antiparagon.analog6.block.integrator.Euler;
 import net.antiparagon.analog6.block.math.Gain;
+import net.antiparagon.analog6.block.source.Constant;
 import net.antiparagon.analog6.block.source.Sine;
 
 import org.slf4j.Logger;
@@ -21,32 +22,27 @@ public class Analog6 {
 	public static void main(String[] args) throws FileNotFoundException {
 		logger.info("Analog 6 - SAC Evolved");
 		
-		Sine sine = new Sine("Sine1");
-		Gain gain = new Gain("Gain1", 3.0);
-		gain.addInput(sine);
-		Euler euler = new Euler("Euler1", 0.0);
-		euler.addInput(gain);
+		Constant constant1 = new Constant("Constant1", 2.0);
+		Sine sine1 = new Sine("Sine1");
+		Gain gain1 = new Gain("Gain1", 3.0);
+		//gain1.addInput(sine1);
+		gain1.addInput(constant1);
+		Euler euler1 = new Euler("Euler1", 0.0);
+		euler1.addInput(gain1);
 		
 		AnalogComputer computer = new AnalogComputer("Analog Computer");
-		
-		//
-		computer.addBlock(euler);
-		computer.addBlock(gain);
-		computer.addBlock(sine);
-		//*/
-		
-		/*
-		computer.addBlock(sine);
-		computer.addBlock(gain);
-		computer.addBlock(euler);
-		//*/
 				
-		outputInputChain(euler, System.out);
+		//computer.addBlock(sine1);
+		computer.addBlock(constant1);
+		computer.addBlock(gain1);
+		computer.addBlock(euler1);
+				
+		outputInputChain(euler1, System.out);
 		
 		List<BlockInterface> outputBlocks = new ArrayList<BlockInterface>();
-		outputBlocks.add(sine);
-		//outputBlocks.add(gain);
-		//outputBlocks.add(euler);
+		//outputBlocks.add(sine1);
+		outputBlocks.add(gain1);
+		outputBlocks.add(euler1);
 		
 		//PrintStream out = new PrintStream("test.csv");
 		PrintStream out = System.out;

@@ -29,6 +29,7 @@ public abstract class Block implements BlockInterface {
 
 	public void step(double timeStep) { 
 		currentTimeStep = timeStep;
+		currentTime += currentTimeStep;
 		doStep();
 	}
 	
@@ -51,7 +52,6 @@ public abstract class Block implements BlockInterface {
 	}
 
 	public void update() {
-		currentTime += currentTimeStep;
 		portOutput = blockOutput;
 	}
 	

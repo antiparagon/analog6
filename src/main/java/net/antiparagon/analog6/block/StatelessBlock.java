@@ -26,13 +26,13 @@ public abstract class StatelessBlock implements BlockInterface {
 	public void initialize(double startTime) { 
 		currentTime = startTime;
 		doStep();
-		update();
+		portOutput = blockOutput;
 	}
 
 	public void step(double timeStep) { 
 		currentTimeStep = timeStep;
-		doStep();
 		currentTime += currentTimeStep;
+		doStep();
 		portOutput = blockOutput;
 	}
 	
@@ -55,7 +55,7 @@ public abstract class StatelessBlock implements BlockInterface {
 	}
 
 	public void update() {
-		
+		// Do nothing here
 	}
 	
 	public double getCurrentTime() {

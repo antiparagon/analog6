@@ -1,9 +1,9 @@
 package net.antiparagon.analog6.block.source;
 
-import net.antiparagon.analog6.block.Block;
 import net.antiparagon.analog6.block.BlockInterface;
+import net.antiparagon.analog6.block.StatelessBlock;
 
-public class Constant extends Block {
+public class Constant extends StatelessBlock {
 	
 	final double constantValue;
 	
