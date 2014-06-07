@@ -7,7 +7,8 @@ public class Constant extends Block {
 	
 	final double constantValue;
 	
-	public Constant(double constantValue) {
+	public Constant(String name, double constantValue) {
+		super(name);
 		this.constantValue = constantValue;
 	}
 

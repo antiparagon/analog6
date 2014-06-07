@@ -7,6 +7,10 @@ public class Sine extends StatelessBlock {
 	private double amplitude = 1.0;
 	private double frequency = 10.0;
 	private double phase = 0.0;
+	
+	public Sine(String name) {
+		super(name);
+	}
 	  
 	public void setAmplitude(double amplitude){ this.amplitude = amplitude; }
 	public double getAmplitude(){ return amplitude; }

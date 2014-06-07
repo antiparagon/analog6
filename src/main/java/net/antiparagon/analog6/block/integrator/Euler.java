@@ -4,7 +4,8 @@ import net.antiparagon.analog6.block.Block;
 
 public class Euler extends Block {
 
-	public Euler(double initialCondition) {
+	public Euler(String name, double initialCondition) {
+		super(name);
 		setOutput(initialCondition);
 	}
 		

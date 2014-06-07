@@ -12,6 +12,10 @@ public abstract class Block implements BlockInterface {
 	private double currentTime = 0.0;
 	private double currentTimeStep = 0.0;
 	
+	public Block(String name) {
+		this.name = name;
+	}
+	
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
 

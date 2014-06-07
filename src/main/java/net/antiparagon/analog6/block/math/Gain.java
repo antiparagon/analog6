@@ -6,7 +6,8 @@ public class Gain extends StatelessBlock {
 
 	final double gainValue;
 	
-	public Gain(double gainValue) {
+	public Gain(String name, double gainValue) {
+		super(name);
 		this.gainValue = gainValue;
 	}
 	
