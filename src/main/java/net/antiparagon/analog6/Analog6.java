@@ -39,6 +39,11 @@ public class Analog6 {
 				
 		outputInputChain(euler1, System.out);
 		
+		PetriNet net = new PetriNet(computer.getBlocks());
+		net.determineOrdering();
+		
+		
+		/*
 		List<BlockInterface> outputBlocks = new ArrayList<BlockInterface>();
 		//outputBlocks.add(sine1);
 		outputBlocks.add(gain1);
@@ -56,7 +61,8 @@ public class Analog6 {
 			computer.update();
 			outputBlockOutput(t, outputBlocks, out);
 		}
-		out.close();		
+		out.close();
+		//*/
 	}
 	
 	public static void outputColumnHeader(List<BlockInterface> blocks, PrintStream out) {
@@ -98,4 +104,5 @@ public class Analog6 {
 			outputInputChainHelper(stack, block);
 		}
 	}
+	
 }

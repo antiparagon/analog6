@@ -16,6 +16,12 @@ public class AnalogComputer extends Block {
 		return this;
 	}
 	
+	public List<BlockInterface> getBlocks() {
+		List<BlockInterface> blocksCopy = new ArrayList<BlockInterface>();
+		blocksCopy.addAll(blocks);
+		return blocksCopy;
+	}
+	
 	@Override
 	public void initialize(double startTime) {
 		super.initialize(startTime);
@@ -24,6 +30,7 @@ public class AnalogComputer extends Block {
 		}
 	}
 
+	@Override
 	public boolean hasState() {
 		for(BlockInterface bi : blocks) {
 			if(bi.hasState()) return true;
@@ -31,6 +38,7 @@ public class AnalogComputer extends Block {
 		return false;
 	}
 
+	@Override
 	public void doStep() {
 		for(BlockInterface bi : blocks) {
 			//System.out.println(bi.getName() + ".doStep()");
