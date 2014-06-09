@@ -27,6 +27,7 @@ public class Analog6 {
 		Gain gain1 = new Gain("Gain1", 3.0);
 		//gain1.addInput(sine1);
 		gain1.addInput(constant1);
+		gain1.addInput(constant1);
 		Euler euler1 = new Euler("Euler1", 0.0);
 		euler1.addInput(gain1);
 		
@@ -40,6 +41,14 @@ public class Analog6 {
 		outputInputChain(euler1, System.out);
 		
 		PetriNet net = new PetriNet(computer.getBlocks());
+		
+		System.out.println();
+	    System.out.println(net.printPTMatrix());
+	    System.out.println();
+	    System.out.println(net.printMMatrix());
+	    System.out.println();
+		
+		
 		net.determineOrdering();
 		
 		

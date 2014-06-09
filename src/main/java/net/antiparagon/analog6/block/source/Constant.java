@@ -1,9 +1,9 @@
 package net.antiparagon.analog6.block.source;
 
 import net.antiparagon.analog6.block.BlockInterface;
-import net.antiparagon.analog6.block.StatelessBlock;
+import net.antiparagon.analog6.block.Block;
 
-public class Constant extends StatelessBlock {
+public class Constant extends Block {
 	
 	final double constantValue;
 	
@@ -25,5 +25,9 @@ public class Constant extends StatelessBlock {
 		throw new RuntimeException("Constant block can't take inputs");
 	}
 
+	@Override
+	public int getNumInputs() {
+		return -1; // Source blocks return -1 as a 'source' flag
+	}
 	
 }

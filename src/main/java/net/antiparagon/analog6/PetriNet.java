@@ -48,26 +48,26 @@ public class PetriNet {
 		// Loop thru each block
 		//
 		System.out.println("Looping through " + blocks.size() + " blocks.");
-		int place_num = 0;
+		int placeNum = 0;
 		for(int i = 0; i < blocks.size(); i++) {			
 			BlockInterface bloc = blocks.get(i);
 			List<BlockInterface> in = bloc.getInputList();
 			//System.out.println("Block " + i + " has " + in.size() + " inputs.");
 			int negOne = indexLookup.get(bloc);
-			//System.out.println("Negative one should occur for block " + neg_one);
+			//System.out.println("Negative one should occur for block " + negOne);
 			for(int j = 0; j < in.size(); j++) {
-				ptMatrix[place_num][negOne] = -1;
+				ptMatrix[placeNum][negOne] = -1;
 				int posOne = indexLookup.get(in.get(j));
-				ptMatrix[place_num][posOne] = 1;
-				if(in.get(j).hasState()) mMatrix[place_num] = 1;
-				place_num++;
+				ptMatrix[placeNum][posOne] = 1;
+				if(in.get(j).hasState()) mMatrix[placeNum] = 1;
+				placeNum++;
 			}        
 		}
 	}
   
 	public void determineOrdering() {
 		System.out.println("Blocks enabled at start.");
-		for(int i = 0; i< blocks.size(); i++) {
+		for(int i = 0; i < blocks.size(); i++) {
 			if(isBlockEnabled(i)) System.out.println(blocks.get(i).getName() + " is enabled.");
 		}
 	}

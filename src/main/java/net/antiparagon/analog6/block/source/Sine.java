@@ -1,8 +1,8 @@
 package net.antiparagon.analog6.block.source;
 
-import net.antiparagon.analog6.block.StatelessBlock;
+import net.antiparagon.analog6.block.Block;
 
-public class Sine extends StatelessBlock {
+public class Sine extends Block {
 
 	private double amplitude = 1.0;
 	private double frequency = 10.0;
@@ -26,4 +26,8 @@ public class Sine extends StatelessBlock {
 		setOutput(amplitude * Math.sin(frequency * getCurrentTime() + phase));
 	}
 
+	@Override
+	public int getNumInputs() {
+		return -1; // Source blocks return -1 as a 'source' flag
+	}
 }
