@@ -3,7 +3,11 @@ package net.antiparagon.analog6.block;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class Block implements BlockInterface {
+	private static final Logger logger = LoggerFactory.getLogger(Block.class);
 
 	private String name = "Block";
 	private List<BlockInterface> inputs = new ArrayList<BlockInterface>();
@@ -19,7 +23,7 @@ public abstract class Block implements BlockInterface {
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
 
-	public boolean hasState() { return false; }
+	public boolean hasState() { return true; }
 
 	public String getType() { return getClass().getName(); }
 
@@ -38,6 +42,9 @@ public abstract class Block implements BlockInterface {
 	}
 	
 	public double getInput() {
+		if(getNumInputs() == 0) {
+			logger.warn(getName() + " has no inputs. Input of 0 to block.");
+		}
 		double input = 0.0;
 		for(BlockInterface block : inputs) {
 			input += block.getOutput(getCurrentTime());

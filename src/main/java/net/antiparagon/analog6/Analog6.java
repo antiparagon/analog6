@@ -2,7 +2,6 @@ package net.antiparagon.analog6;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -27,7 +26,7 @@ public class Analog6 {
 		Gain gain1 = new Gain("Gain1", 3.0);
 		//gain1.addInput(sine1);
 		gain1.addInput(constant1);
-		gain1.addInput(constant1);
+		//gain1.addInput(constant1);
 		Euler euler1 = new Euler("Euler1", 0.0);
 		euler1.addInput(gain1);
 		
@@ -37,8 +36,12 @@ public class Analog6 {
 		computer.addBlock(constant1);
 		computer.addBlock(gain1);
 		computer.addBlock(euler1);
-				
+		
+		System.out.println();
 		outputInputChain(euler1, System.out);
+		System.out.println();
+		outputBlocksWithState(computer.getBlocks(), System.out);
+		System.out.println();
 		
 		PetriNet net = new PetriNet(computer.getBlocks());
 		
@@ -47,8 +50,7 @@ public class Analog6 {
 	    System.out.println();
 	    System.out.println(net.printMMatrix());
 	    System.out.println();
-		
-		
+				
 		net.determineOrdering();
 		
 		
@@ -72,6 +74,16 @@ public class Analog6 {
 		}
 		out.close();
 		//*/
+	}
+	
+	public static void outputBlocksWithState(List<BlockInterface> blocks, PrintStream out) {
+		if(blocks.isEmpty()) throw new IllegalArgumentException("Block list is empty");
+		for(int i = 0; i < blocks.size(); ++i) {
+			if(!blocks.get(i).hasState()) continue;
+			out.print("[" + i + "] ");
+			out.print(blocks.get(i).getName());
+			out.println(" has state");
+		}
 	}
 	
 	public static void outputColumnHeader(List<BlockInterface> blocks, PrintStream out) {

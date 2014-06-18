@@ -24,7 +24,8 @@ public class PetriNet {
     
 		for(int i = 0; i < blocks.size(); i++) {
 			input = blocks.get(i).getNumInputs();
-			if(input < 0) input = 1;
+			// Sources have value of -1 for number of inputs
+			if(input == -1) input = 1;
 			numPlaces += input;        
 		}       
 		System.out.println("Number of places: " + numPlaces);
@@ -51,22 +52,31 @@ public class PetriNet {
 		int placeNum = 0;
 		for(int i = 0; i < blocks.size(); i++) {			
 			BlockInterface bloc = blocks.get(i);
+			int transition = indexLookup.get(bloc);
+			// Handle source blocks
+			if(bloc.getNumInputs() == -1) {
+				ptMatrix[placeNum][transition] = -1;
+				mMatrix[placeNum] = 1;
+				placeNum++;
+				continue;
+			}
+			
 			List<BlockInterface> in = bloc.getInputList();
 			//System.out.println("Block " + i + " has " + in.size() + " inputs.");
-			int negOne = indexLookup.get(bloc);
+			
 			//System.out.println("Negative one should occur for block " + negOne);
 			for(int j = 0; j < in.size(); j++) {
-				ptMatrix[placeNum][negOne] = -1;
+				ptMatrix[placeNum][transition] = -1;
 				int posOne = indexLookup.get(in.get(j));
 				ptMatrix[placeNum][posOne] = 1;
-				if(in.get(j).hasState()) mMatrix[placeNum] = 1;
+				//if(in.get(j).hasState()) mMatrix[placeNum] = 1;
 				placeNum++;
 			}        
 		}
 	}
   
 	public void determineOrdering() {
-		System.out.println("Blocks enabled at start.");
+		System.out.println("Blocks enabled at start:");
 		for(int i = 0; i < blocks.size(); i++) {
 			if(isBlockEnabled(i)) System.out.println(blocks.get(i).getName() + " is enabled.");
 		}
