@@ -22,7 +22,7 @@ public class Analog6 {
 		logger.info("Analog 6 - SAC Evolved");
 		
 		Constant constant1 = new Constant("Constant1", 2.0);
-		Sine sine1 = new Sine("Sine1");
+		Sine sine1 = new Sine("Sine1", 1.0, 1.0, 0.0);
 		Gain gain1 = new Gain("Gain1", 3.0);
 		//gain1.addInput(sine1);
 		gain1.addInput(constant1);
@@ -45,11 +45,19 @@ public class Analog6 {
 		
 		PetriNet net = new PetriNet(computer.getBlocks());
 		
-		System.out.println();
+		System.out.println("PT Matrix");
 	    System.out.println(net.printPTMatrix());
+	    System.out.println("Marking vector");
+	    System.out.println(net.printMVector());
 	    System.out.println();
-	    System.out.println(net.printMMatrix());
-	    System.out.println();
+	    System.out.println("D- Matrix");
+	    System.out.println(net.printDMinusMatrix());
+	    System.out.println("D+ Matrix");
+	    System.out.println(net.printDPlusMatrix());
+	    System.out.println("D Matrix");
+	    System.out.println(net.printDMatrix());
+	    System.out.println("Transpose D Matrix");
+	    System.out.println(net.printMatrix(net.transposeMatrix(net.getDMatrix())));
 				
 		net.determineOrdering();
 		

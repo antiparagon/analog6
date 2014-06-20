@@ -4,12 +4,15 @@ import net.antiparagon.analog6.block.Block;
 
 public class Sine extends Block {
 
-	private double amplitude = 1.0;
-	private double frequency = 10.0;
-	private double phase = 0.0;
+	private double amplitude;
+	private double frequency;
+	private double phase;
 	
-	public Sine(String name) {
+	public Sine(String name, double amplitude, double frequency, double phase) {
 		super(name);
+		this.amplitude = amplitude;
+		this.frequency = frequency;
+		this.phase = phase;
 	}
 	  
 	public void setAmplitude(double amplitude){ this.amplitude = amplitude; }
@@ -22,8 +25,11 @@ public class Sine extends Block {
 	public double getPhase(){ return phase; }
 	
 	@Override
-	public void doStep() {
-		setOutput(amplitude * Math.sin(frequency * getCurrentTime() + phase));
+	public void doStep() { }
+	
+	@Override
+	public double getOutput(double time) {
+		return amplitude * Math.sin(frequency * time + phase);
 	}
 
 	@Override

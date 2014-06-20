@@ -34,8 +34,11 @@ public class PetriNet {
 		// Create the vector and matrices:
 		//
 		ptMatrix = new int[numPlaces][numTransitions];
-		mMatrix = new int[numPlaces];
-    
+		mVector = new int[numPlaces];
+		
+		dMinusMatrix = new int[numTransitions][numPlaces];
+		dPlusMatrix = new int[numTransitions][numPlaces];
+		    
 		//
 		// Setup a map for index lookup:
 		//
@@ -56,7 +59,8 @@ public class PetriNet {
 			// Handle source blocks
 			if(bloc.getNumInputs() == -1) {
 				ptMatrix[placeNum][transition] = -1;
-				mMatrix[placeNum] = 1;
+				dMinusMatrix[transition][placeNum] = 1;
+				mVector[placeNum] = 1;
 				placeNum++;
 				continue;
 			}
@@ -67,12 +71,16 @@ public class PetriNet {
 			//System.out.println("Negative one should occur for block " + negOne);
 			for(int j = 0; j < in.size(); j++) {
 				ptMatrix[placeNum][transition] = -1;
+				dMinusMatrix[transition][placeNum] = 1;
 				int posOne = indexLookup.get(in.get(j));
 				ptMatrix[placeNum][posOne] = 1;
-				//if(in.get(j).hasState()) mMatrix[placeNum] = 1;
+				dPlusMatrix[posOne][placeNum] = 1;
+				if(in.get(j).hasState()) mVector[placeNum] = 1;
 				placeNum++;
 			}        
 		}
+		
+		dMatrix = addMatrices(dPlusMatrix, negateMatrix(copyMatrix(dMinusMatrix)));
 	}
   
 	public void determineOrdering() {
@@ -88,7 +96,7 @@ public class PetriNet {
 		if(index < numTransitions) sMatrix[index] = 1;
 		multiplyPTbyS(mPrime, sMatrix);
 		for(int i = 0; i < mPrime.length; i++) {
-			mPrime[i] += mMatrix[i];
+			mPrime[i] += mVector[i];
 			if(mPrime[i] < 0) return false;
 		}
 		return true;
@@ -96,8 +104,7 @@ public class PetriNet {
   
 	public void multiplyPTbyS(int mPrime[], int sMatrix[]) {
 		if(sMatrix.length != ptMatrix[0].length) {
-			System.out.println("Unable to multiply PT by S because dimensions don't match.");
-			return;
+			throw new IllegalArgumentException("Unable to multiply PT by S because dimensions don't match.");
 		}
 		int sum = 0;
 		for(int i = 0; i < ptMatrix.length; i++) {
@@ -109,29 +116,117 @@ public class PetriNet {
 		}
 	}
       
-	public String printPTMatrix() {
+	public String printPTMatrix() { return printMatrix(ptMatrix); }
+	public String printMVector() { return printVector(mVector); }
+	
+	public String printDPlusMatrix() { return printMatrix(dPlusMatrix); }
+	public String printDMinusMatrix() { return printMatrix(dMinusMatrix); }
+	public String printDMatrix() { return printMatrix(dMatrix); }
+	
+	public String printMatrix(int matrix[][]) {
 		StringBuilder out = new StringBuilder();
-		for(int i = 0; i < ptMatrix.length; i++) {
-			for(int j = 0; j < ptMatrix[i].length; j++)
-				out.append(ptMatrix[i][j]).append("\t");
-			out.append("\n");
+		for(int i = 0; i < matrix.length; i++) {
+			for(int j = 0; j < matrix[i].length; j++)
+				out.append(matrix[i][j]).append("\t");
+			out.append(System.getProperty("line.separator"));
 		}
 		return out.toString();
 	}
   
-	public String printMMatrix() {
+	public String printVector(int vector[]) {
 		StringBuilder out = new StringBuilder();
-		for(int i = 0; i < mMatrix.length; i++) {
-			out.append(mMatrix[i]).append("\n");        
+		for(int i = 0; i < vector.length; i++) {
+			out.append(vector[i]).append(System.getProperty("line.separator"));        
 		}
 		return out.toString();
 	}
-  
+	
+	public int[][] zeroMatrix(int matrix[][]) {
+		for(int i = 0; i < matrix.length; i++) {
+			for(int j = 0; j < matrix[i].length; j++)
+				matrix[i][j] = 0;
+		}
+		return matrix;
+	}
+	
+	public int[][] negateMatrix(int matrix[][]) {
+		for(int i = 0; i < matrix.length; i++) {
+			for(int j = 0; j < matrix[i].length; j++)
+				matrix[i][j] *= -1;
+		}
+		return matrix;
+	}
+	
+	public int[][] copyMatrix(int matrix[][]) {
+		int[][] result = new int[matrix.length][matrix[0].length];
+		for(int i = 0; i < matrix.length; i++) {
+			for(int j = 0; j < matrix[i].length; j++)
+				result[i][j] = matrix[i][j];
+		}
+		return result;
+	}
+	
+	public int[][] transposeMatrix(int matrix[][]) {
+		int[][] result = new int[matrix[0].length][matrix.length];
+		for(int i = 0; i < matrix.length; i++) {
+			for(int j = 0; j < matrix[i].length; j++)
+				result[j][i] = matrix[i][j];
+		}
+		return result;
+	}
+	
+	public int[][] addMatrices(int[][] lhsMatrix, int[][] rhsMatrix) {
+		if(lhsMatrix.length != rhsMatrix.length) {
+			throw new IllegalArgumentException("Unable to add matrices because the number of row do not match.");
+		}
+		if(lhsMatrix[0].length != rhsMatrix[0].length) {
+			throw new IllegalArgumentException("Unable to add matrices because the number of columns do not match.");
+		}
+		int[][] result = new int[lhsMatrix.length][lhsMatrix[0].length];
+		for(int i = 0; i < lhsMatrix.length; i++) {
+			for(int j = 0; j < lhsMatrix[i].length; j++)
+				result[i][j] = lhsMatrix[i][j] + rhsMatrix[i][j];
+		}
+		return result;
+	}
+	
+	public int getNumPlaces() {
+		return numPlaces;
+	}
+
+	public int getNumTransitions() {
+		return numTransitions;
+	}
+
+	public int[][] getPTMatrix() {
+		return ptMatrix;
+	}
+
+	public int[] getMVector() {
+		return mVector;
+	}
+
+	public int[][] getDPlusMatrix() {
+		return dPlusMatrix;
+	}
+
+	public int[][] getDMinusMatrix() {
+		return dMinusMatrix;
+	}
+
+	public int[][] getDMatrix() {
+		return dMatrix;
+	}
+
 	List<BlockInterface> blocks = null;
   
 	int numPlaces = 0;
 	int numTransitions = 0;
   
 	int ptMatrix[][] = null;
-	int mMatrix[] = null;
+	int mVector[] = null;
+	
+	int dPlusMatrix[][] = null;
+	int dMinusMatrix[][] = null;
+	int dMatrix[][] = null;
 }
