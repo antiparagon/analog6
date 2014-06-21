@@ -3,10 +3,10 @@ package net.antiparagon.analog6.block;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class StatelessBlock implements BlockInterface {
+public abstract class StatelessBlock implements IBlock {
 
 	private String name = "StatelessBlock";
-	private List<BlockInterface> inputs = new ArrayList<BlockInterface>();
+	private List<IBlock> inputs = new ArrayList<IBlock>();
 	private double blockOutput = 0.0;
 	private double portOutput = 0.0;
 	private double currentTime = 0.0;
@@ -42,7 +42,7 @@ public abstract class StatelessBlock implements BlockInterface {
 	
 	public double getInput() {
 		double input = 0.0;
-		for(BlockInterface block : inputs) {
+		for(IBlock block : inputs) {
 			input += block.getOutput(getCurrentTime());
 		}
 		return input;
@@ -69,7 +69,7 @@ public abstract class StatelessBlock implements BlockInterface {
 		return portOutput;
 	}
 
-	public void addInput(BlockInterface bi) {
+	public void addInput(IBlock bi) {
 		inputs.add(bi);
 	}
 
@@ -77,8 +77,8 @@ public abstract class StatelessBlock implements BlockInterface {
 		return inputs.size();
 	}
 
-	public List<BlockInterface> getInputList() {
-		List<BlockInterface> inputsCopy = new ArrayList<BlockInterface>();
+	public List<IBlock> getInputList() {
+		List<IBlock> inputsCopy = new ArrayList<IBlock>();
 		inputsCopy.addAll(inputs);
 		return inputsCopy;
 	}

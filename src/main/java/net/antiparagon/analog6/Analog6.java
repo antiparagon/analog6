@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 import net.antiparagon.analog6.block.AnalogComputer;
-import net.antiparagon.analog6.block.BlockInterface;
+import net.antiparagon.analog6.block.IBlock;
 import net.antiparagon.analog6.block.integrator.Euler;
 import net.antiparagon.analog6.block.math.Gain;
 import net.antiparagon.analog6.block.source.Constant;
@@ -33,9 +33,9 @@ public class Analog6 {
 		AnalogComputer computer = new AnalogComputer("Analog Computer");
 				
 		//computer.addBlock(sine1);
-		computer.addBlock(constant1);
-		computer.addBlock(gain1);
 		computer.addBlock(euler1);
+		computer.addBlock(gain1);
+		computer.addBlock(constant1);
 		
 		System.out.println();
 		outputInputChain(euler1, System.out);
@@ -45,10 +45,8 @@ public class Analog6 {
 		
 		PetriNet net = new PetriNet(computer.getBlocks());
 		
-		System.out.println("PT Matrix");
-	    System.out.println(net.printPTMatrix());
 	    System.out.println("Marking vector");
-	    System.out.println(net.printMVector());
+	    System.out.println(net.printMarkingsVector());
 	    System.out.println();
 	    System.out.println("D- Matrix");
 	    System.out.println(net.printDMinusMatrix());
@@ -56,10 +54,14 @@ public class Analog6 {
 	    System.out.println(net.printDPlusMatrix());
 	    System.out.println("D Matrix");
 	    System.out.println(net.printDMatrix());
-	    System.out.println("Transpose D Matrix");
-	    System.out.println(net.printMatrix(net.transposeMatrix(net.getDMatrix())));
+	    
+	    System.out.println();
 				
-		net.determineOrdering();
+	    System.out.println("Block Order");
+		List<IBlock> order = net.determineOrdering();
+		for(int i = 0; i < order.size(); ++i) {
+			System.out.println((i + 1) + ". " + order.get(i).getName());
+		}
 		
 		
 		/*
@@ -84,7 +86,7 @@ public class Analog6 {
 		//*/
 	}
 	
-	public static void outputBlocksWithState(List<BlockInterface> blocks, PrintStream out) {
+	public static void outputBlocksWithState(List<IBlock> blocks, PrintStream out) {
 		if(blocks.isEmpty()) throw new IllegalArgumentException("Block list is empty");
 		for(int i = 0; i < blocks.size(); ++i) {
 			if(!blocks.get(i).hasState()) continue;
@@ -94,7 +96,7 @@ public class Analog6 {
 		}
 	}
 	
-	public static void outputColumnHeader(List<BlockInterface> blocks, PrintStream out) {
+	public static void outputColumnHeader(List<IBlock> blocks, PrintStream out) {
 		if(blocks.isEmpty()) throw new IllegalArgumentException("Block list is empty");
 		out.print("Time,");
 		for(int i = 0; i < blocks.size() - 1; ++i) {
@@ -104,7 +106,7 @@ public class Analog6 {
 		out.println(blocks.get(blocks.size() - 1).getName());
 	}
 	
-	public static void outputBlockOutput(double time, List<BlockInterface> blocks, PrintStream out) {
+	public static void outputBlockOutput(double time, List<IBlock> blocks, PrintStream out) {
 		if(blocks.isEmpty()) throw new IllegalArgumentException("Block list is empty");
 		out.print(time);
 		out.print(",");
@@ -116,20 +118,20 @@ public class Analog6 {
 	}
 	
 
-	public static void outputInputChain(BlockInterface bi, PrintStream out) {
-		Stack<BlockInterface> stack = new Stack<BlockInterface>();
+	public static void outputInputChain(IBlock bi, PrintStream out) {
+		Stack<IBlock> stack = new Stack<IBlock>();
 		outputInputChainHelper(stack, bi);
 		while(!stack.isEmpty()) {
-			BlockInterface block = stack.pop();
+			IBlock block = stack.pop();
 			out.print(block.getName());
 			if(!stack.isEmpty()) out.print(" -> ");
 		}
 		out.println();
 	}
 	
-	private static void outputInputChainHelper(Stack<BlockInterface> stack, BlockInterface bi) {
+	private static void outputInputChainHelper(Stack<IBlock> stack, IBlock bi) {
 		stack.push(bi);
-		for(BlockInterface block : bi.getInputList()) {
+		for(IBlock block : bi.getInputList()) {
 			outputInputChainHelper(stack, block);
 		}
 	}

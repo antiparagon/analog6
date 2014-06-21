@@ -2,7 +2,7 @@ package net.antiparagon.analog6.block;
 
 import java.util.List;
 
-public interface BlockInterface {
+public interface IBlock {
 	String getName();
 	void setName(String name);
 	  
@@ -16,8 +16,8 @@ public interface BlockInterface {
 	    
 	double getOutput(double time);
 	  
-	void addInput(BlockInterface bi);
+	void addInput(IBlock bi);
 	int getNumInputs();
-	List<BlockInterface> getInputList();
+	List<IBlock> getInputList();
 	void clearInputs();
 }

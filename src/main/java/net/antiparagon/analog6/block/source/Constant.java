@@ -1,6 +1,6 @@
 package net.antiparagon.analog6.block.source;
 
-import net.antiparagon.analog6.block.BlockInterface;
+import net.antiparagon.analog6.block.IBlock;
 import net.antiparagon.analog6.block.Block;
 
 public class Constant extends Block {
@@ -21,7 +21,7 @@ public class Constant extends Block {
 	}
 
 	@Override
-	public void addInput(BlockInterface bi) {
+	public void addInput(IBlock bi) {
 		throw new RuntimeException("Constant block can't take inputs");
 	}
 

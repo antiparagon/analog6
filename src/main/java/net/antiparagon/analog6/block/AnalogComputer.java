@@ -5,19 +5,19 @@ import java.util.List;
 
 public class AnalogComputer extends Block {
 	
-	private List<BlockInterface> blocks = new ArrayList<BlockInterface>();
+	private List<IBlock> blocks = new ArrayList<IBlock>();
 	
 	public AnalogComputer(String name) {
 		super(name);
 	}
 
-	public AnalogComputer addBlock(BlockInterface block) {
+	public AnalogComputer addBlock(IBlock block) {
 		blocks.add(block);
 		return this;
 	}
 	
-	public List<BlockInterface> getBlocks() {
-		List<BlockInterface> blocksCopy = new ArrayList<BlockInterface>();
+	public List<IBlock> getBlocks() {
+		List<IBlock> blocksCopy = new ArrayList<IBlock>();
 		blocksCopy.addAll(blocks);
 		return blocksCopy;
 	}
@@ -25,14 +25,14 @@ public class AnalogComputer extends Block {
 	@Override
 	public void initialize(double startTime) {
 		super.initialize(startTime);
-		for(BlockInterface bi : blocks) {
+		for(IBlock bi : blocks) {
 			bi.initialize(getCurrentTime());
 		}
 	}
 
 	@Override
 	public boolean hasState() {
-		for(BlockInterface bi : blocks) {
+		for(IBlock bi : blocks) {
 			if(bi.hasState()) return true;
 		}
 		return false;
@@ -40,7 +40,7 @@ public class AnalogComputer extends Block {
 
 	@Override
 	public void doStep() {
-		for(BlockInterface bi : blocks) {
+		for(IBlock bi : blocks) {
 			//System.out.println(bi.getName() + ".doStep()");
 			bi.step(getCurrentTimeStep());
 		}
@@ -48,7 +48,7 @@ public class AnalogComputer extends Block {
 	
 	@Override
 	public void update() {
-		for(BlockInterface bi : blocks) {
+		for(IBlock bi : blocks) {
 			bi.update();
 		}
 		super.update();

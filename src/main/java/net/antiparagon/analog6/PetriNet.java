@@ -1,13 +1,15 @@
 package net.antiparagon.analog6;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import net.antiparagon.analog6.block.BlockInterface;
+import net.antiparagon.analog6.block.IBlock;
 
 public class PetriNet {
 	
-	public PetriNet(List<BlockInterface> blockList) {
+	public PetriNet(List<IBlock> blockList) {
 		
 		System.out.println("Creating Analog Computer Petri Net:");
 		blocks = blockList;
@@ -33,8 +35,7 @@ public class PetriNet {
 		//
 		// Create the vector and matrices:
 		//
-		ptMatrix = new int[numPlaces][numTransitions];
-		mVector = new int[numPlaces];
+		markingsVector = new int[numPlaces];
 		
 		dMinusMatrix = new int[numTransitions][numPlaces];
 		dPlusMatrix = new int[numTransitions][numPlaces];
@@ -42,7 +43,7 @@ public class PetriNet {
 		//
 		// Setup a map for index lookup:
 		//
-		HashMap<BlockInterface, Integer> indexLookup = new HashMap<BlockInterface, Integer>();
+		Map<IBlock, Integer> indexLookup = new HashMap<IBlock, Integer>();
 		for(int i = 0; i < blocks.size(); i++) {
 			indexLookup.put(blocks.get(i), i);
 		}
@@ -54,28 +55,22 @@ public class PetriNet {
 		System.out.println("Looping through " + blocks.size() + " blocks.");
 		int placeNum = 0;
 		for(int i = 0; i < blocks.size(); i++) {			
-			BlockInterface bloc = blocks.get(i);
+			IBlock bloc = blocks.get(i);
 			int transition = indexLookup.get(bloc);
 			// Handle source blocks
 			if(bloc.getNumInputs() == -1) {
-				ptMatrix[placeNum][transition] = -1;
 				dMinusMatrix[transition][placeNum] = 1;
-				mVector[placeNum] = 1;
+				markingsVector[placeNum] = 1;
 				placeNum++;
 				continue;
 			}
 			
-			List<BlockInterface> in = bloc.getInputList();
-			//System.out.println("Block " + i + " has " + in.size() + " inputs.");
-			
-			//System.out.println("Negative one should occur for block " + negOne);
+			List<IBlock> in = bloc.getInputList();
 			for(int j = 0; j < in.size(); j++) {
-				ptMatrix[placeNum][transition] = -1;
 				dMinusMatrix[transition][placeNum] = 1;
 				int posOne = indexLookup.get(in.get(j));
-				ptMatrix[placeNum][posOne] = 1;
 				dPlusMatrix[posOne][placeNum] = 1;
-				if(in.get(j).hasState()) mVector[placeNum] = 1;
+				if(in.get(j).hasState()) markingsVector[placeNum] = 1;
 				placeNum++;
 			}        
 		}
@@ -83,41 +78,64 @@ public class PetriNet {
 		dMatrix = addMatrices(dPlusMatrix, negateMatrix(copyMatrix(dMinusMatrix)));
 	}
   
-	public void determineOrdering() {
-		System.out.println("Blocks enabled at start:");
+	public List<IBlock> determineOrdering() {
 		for(int i = 0; i < blocks.size(); i++) {
-			if(isBlockEnabled(i)) System.out.println(blocks.get(i).getName() + " is enabled.");
+			if(isBlockEnabled(i)) System.out.println(blocks.get(i).getName() + " is enabled at start.");
 		}
+		List<IBlock> orderedBlocks = new ArrayList<IBlock>();
+		for(int i = 0; i < blocks.size(); i++) {
+			for(int j = 0; j < blocks.size(); j++) {
+				if(orderedBlocks.contains(blocks.get(j))) continue;
+				if(isBlockEnabled(j)) {
+					System.out.println(blocks.get(j).getName() + " is enabled. Firing...");
+					System.out.println("Markings vector before:");
+					System.out.println(printMarkingsVector());
+					orderedBlocks.add(blocks.get(j));
+					fireBlock(j);
+					System.out.println("Markings vector after:");
+					System.out.println(printMarkingsVector());
+					break;
+				}
+			}
+		}
+		return orderedBlocks;
+	}
+	
+	private void fireBlock(int index) {
+		int[] firing = createFiringVector();
+		firing[index] = 1;
+		int[] result = multiplyFiringVectorBy(firing, getDMatrix());
+		for(int i = 0; i < markingsVector.length; ++i)
+			markingsVector[i] += result[i];
 	}
   
 	public boolean isBlockEnabled(int index) {
-		int mPrime[] = new int[numPlaces];
-		int sMatrix[] = new int[numTransitions];
-		if(index < numTransitions) sMatrix[index] = 1;
-		multiplyPTbyS(mPrime, sMatrix);
-		for(int i = 0; i < mPrime.length; i++) {
-			mPrime[i] += mVector[i];
-			if(mPrime[i] < 0) return false;
+		if(index < 0 || index >= numTransitions) {
+			throw new IllegalArgumentException("Invalid index " + index);
 		}
-		return true;
+		int[] firing = createFiringVector();
+		firing[index] = 1;
+		int[] result = multiplyFiringVectorBy(firing, getDMinusMatrix());
+		if(markingsVector[index] >= result[index]) {
+			return true;
+		}
+		return false;
 	}
-  
-	public void multiplyPTbyS(int mPrime[], int sMatrix[]) {
-		if(sMatrix.length != ptMatrix[0].length) {
-			throw new IllegalArgumentException("Unable to multiply PT by S because dimensions don't match.");
-		}
+	
+	private int[] multiplyFiringVectorBy(int firingVector[], int[][] aDMatrix) {
+		int[] result = new int[aDMatrix.length];
 		int sum = 0;
-		for(int i = 0; i < ptMatrix.length; i++) {
-			for(int j = 0; j < ptMatrix[i].length; j++) {
-				sum += ptMatrix[i][j] * sMatrix[j];
+		for(int i = 0; i < firingVector.length; i++) {
+			for(int j = 0; j < aDMatrix.length; j++) {
+				sum += firingVector[j] * aDMatrix[j][i];
 			}
-			mPrime[i] = sum;
+			result[i] = sum;
 			sum = 0;
 		}
+		return result;
 	}
       
-	public String printPTMatrix() { return printMatrix(ptMatrix); }
-	public String printMVector() { return printVector(mVector); }
+	public String printMarkingsVector() { return printVector(markingsVector); }
 	
 	public String printDPlusMatrix() { return printMatrix(dPlusMatrix); }
 	public String printDMinusMatrix() { return printMatrix(dMinusMatrix); }
@@ -136,7 +154,7 @@ public class PetriNet {
 	public String printVector(int vector[]) {
 		StringBuilder out = new StringBuilder();
 		for(int i = 0; i < vector.length; i++) {
-			out.append(vector[i]).append(System.getProperty("line.separator"));        
+			out.append(vector[i]).append(" ");        
 		}
 		return out.toString();
 	}
@@ -190,6 +208,10 @@ public class PetriNet {
 		return result;
 	}
 	
+	public int[] createFiringVector() {
+		return new int[numTransitions];
+	}
+	
 	public int getNumPlaces() {
 		return numPlaces;
 	}
@@ -198,12 +220,8 @@ public class PetriNet {
 		return numTransitions;
 	}
 
-	public int[][] getPTMatrix() {
-		return ptMatrix;
-	}
-
-	public int[] getMVector() {
-		return mVector;
+	public int[] getMarkingsVector() {
+		return markingsVector;
 	}
 
 	public int[][] getDPlusMatrix() {
@@ -218,13 +236,12 @@ public class PetriNet {
 		return dMatrix;
 	}
 
-	List<BlockInterface> blocks = null;
+	List<IBlock> blocks = null;
   
 	int numPlaces = 0;
 	int numTransitions = 0;
   
-	int ptMatrix[][] = null;
-	int mVector[] = null;
+	int markingsVector[] = null;
 	
 	int dPlusMatrix[][] = null;
 	int dMinusMatrix[][] = null;
