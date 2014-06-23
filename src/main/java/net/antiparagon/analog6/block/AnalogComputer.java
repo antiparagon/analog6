@@ -3,6 +3,8 @@ package net.antiparagon.analog6.block;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.antiparagon.analog6.PetriNet;
+
 public class AnalogComputer extends Block {
 	
 	private List<IBlock> blocks = new ArrayList<IBlock>();
@@ -20,6 +22,19 @@ public class AnalogComputer extends Block {
 		List<IBlock> blocksCopy = new ArrayList<IBlock>();
 		blocksCopy.addAll(blocks);
 		return blocksCopy;
+	}
+	
+	public void setBlocks(List<IBlock> blocks) {
+		this.blocks = blocks;
+	}
+	
+	public void orderBlocks() {
+		PetriNet net = new PetriNet(getBlocks());
+		List<IBlock> ordered = net.determineOrdering();
+		if(getBlocks().size() != ordered.size()) {
+			throw new RuntimeException("Unable to order all the blocks");
+		}
+		setBlocks(ordered);
 	}
 	
 	@Override

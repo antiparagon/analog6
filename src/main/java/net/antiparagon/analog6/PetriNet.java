@@ -116,17 +116,19 @@ public class PetriNet {
 		int[] firing = createFiringVector();
 		firing[index] = 1;
 		int[] result = multiplyFiringVectorBy(firing, getDMinusMatrix());
-		if(markingsVector[index] >= result[index]) {
-			return true;
+		for(int i = 0; i < result.length; ++i) {
+			if(markingsVector[i] < result[i]) {
+				return false;
+			}
 		}
-		return false;
+		return true;
 	}
 	
 	private int[] multiplyFiringVectorBy(int firingVector[], int[][] aDMatrix) {
-		int[] result = new int[aDMatrix.length];
+		int[] result = new int[aDMatrix[0].length];
 		int sum = 0;
-		for(int i = 0; i < firingVector.length; i++) {
-			for(int j = 0; j < aDMatrix.length; j++) {
+		for(int i = 0; i < aDMatrix[0].length; i++) {
+			for(int j = 0; j < firingVector.length; ++j) {
 				sum += firingVector[j] * aDMatrix[j][i];
 			}
 			result[i] = sum;
