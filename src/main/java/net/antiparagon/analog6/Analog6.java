@@ -2,6 +2,7 @@ package net.antiparagon.analog6;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -65,10 +66,11 @@ public class Analog6 {
 		}
 		//
 				
-		/*
-		List<BlockInterface> outputBlocks = new ArrayList<BlockInterface>();
+		//
+		List<IBlock> outputBlocks = new ArrayList<IBlock>();
 		//outputBlocks.add(sine1);
 		outputBlocks.add(gain1);
+		outputBlocks.add(gain2);
 		outputBlocks.add(euler1);
 		
 		//PrintStream out = new PrintStream("test.csv");

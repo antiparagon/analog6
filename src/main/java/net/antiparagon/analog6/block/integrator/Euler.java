@@ -7,11 +7,9 @@ public class Euler extends Block {
 	public Euler(String name, double initialCondition) {
 		super(name);
 		setOutput(initialCondition);
+		setPortOutput(initialCondition);
 	}
 		
-	@Override
-	public boolean hasState() { return true; }
-
 	@Override
 	public void doStep() {
 		setOutput(getOutput(getCurrentTime()) + (getInput() * getCurrentTimeStep()));

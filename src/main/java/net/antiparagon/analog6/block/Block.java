@@ -29,11 +29,11 @@ public abstract class Block implements IBlock {
 
 	public void initialize(double startTime) { 
 		currentTime = startTime;
+		update();
 	}
 
 	public void step(double timeStep) { 
 		currentTimeStep = timeStep;
-		currentTime += currentTimeStep;
 		doStep();
 	}
 	
@@ -59,7 +59,12 @@ public abstract class Block implements IBlock {
 	}
 
 	public void update() {
+		currentTime += currentTimeStep;
 		portOutput = blockOutput;
+	}
+	
+	public void setPortOutput(double portOutput) {
+		this.portOutput = portOutput;
 	}
 	
 	public double getCurrentTime() {

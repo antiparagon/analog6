@@ -48,11 +48,11 @@ public class PetriNet {
 			indexLookup.put(blocks.get(i), i);
 		}
     
-		System.out.println("Filling in PT matrix...");
+		//System.out.println("Filling in PT matrix...");
 		//
 		// Loop thru each block
 		//
-		System.out.println("Looping through " + blocks.size() + " blocks.");
+		//System.out.println("Looping through " + blocks.size() + " blocks.");
 		int placeNum = 0;
 		for(int i = 0; i < blocks.size(); i++) {			
 			IBlock bloc = blocks.get(i);
@@ -87,13 +87,13 @@ public class PetriNet {
 			for(int j = 0; j < blocks.size(); j++) {
 				if(orderedBlocks.contains(blocks.get(j))) continue;
 				if(isBlockEnabled(j)) {
-					System.out.println(blocks.get(j).getName() + " is enabled. Firing...");
-					System.out.println("Markings vector before:");
-					System.out.println(printMarkingsVector());
+					//System.out.println(blocks.get(j).getName() + " is enabled. Firing...");
+					//System.out.println("Markings vector before:");
+					//System.out.println(printMarkingsVector());
 					orderedBlocks.add(blocks.get(j));
 					fireBlock(j);
-					System.out.println("Markings vector after:");
-					System.out.println(printMarkingsVector());
+					//System.out.println("Markings vector after:");
+					//System.out.println(printMarkingsVector());
 					break;
 				}
 			}

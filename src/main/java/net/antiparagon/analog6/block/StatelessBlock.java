@@ -31,7 +31,6 @@ public abstract class StatelessBlock implements IBlock {
 
 	public void step(double timeStep) { 
 		currentTimeStep = timeStep;
-		currentTime += currentTimeStep;
 		doStep();
 		portOutput = blockOutput;
 	}
@@ -55,7 +54,7 @@ public abstract class StatelessBlock implements IBlock {
 	}
 
 	public void update() {
-		// Do nothing here
+		currentTime += currentTimeStep;
 	}
 	
 	public double getCurrentTime() {
