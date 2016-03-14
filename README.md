@@ -1,6 +1,4 @@
-# Analog 6 
- 
-## Description
+# Analog 6
 
 This is a simulated analog computer.
 
